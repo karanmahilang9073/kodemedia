@@ -1,0 +1,17 @@
+/* Add this to your tailwind.config.js for animations */
+module.exports = {
+  theme: {
+    extend: {
+      animation: {
+        'slide-in-right': 'slideInRight 0.3s ease-out',
+        'spin': 'spin 1s linear infinite',
+      },
+      keyframes: {
+        slideInRight: {
+          '0%': { transform: 'translateX(100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+      },
+    },
+  },
+}
