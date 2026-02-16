@@ -94,8 +94,10 @@ const Register = () => {
         <form className="space-y-5" onSubmit={handleSubmit} noValidate>
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium">Full Name</label>
+            <label htmlFor="register-name" className="block text-sm font-medium">Full Name</label>
             <input
+              id="register-name"
+              name="name"
               className="mt-1 w-full border rounded-lg px-3 py-2"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -107,8 +109,10 @@ const Register = () => {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium">Email</label>
+            <label htmlFor="register-email" className="block text-sm font-medium">Email</label>
             <input
+              id="register-email"
+              name="email"
               type="email"
               className="mt-1 w-full border rounded-lg px-3 py-2"
               value={email}
@@ -121,8 +125,10 @@ const Register = () => {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium">Password</label>
+            <label htmlFor="register-password" className="block text-sm font-medium">Password</label>
             <input
+              id="register-password"
+              name="password"
               type="password"
               className="mt-1 w-full border rounded-lg px-3 py-2"
               value={password}
@@ -142,8 +148,10 @@ const Register = () => {
 
           {/* Confirm Password */}
           <div>
-            <label className="block text-sm font-medium">Confirm Password</label>
+            <label htmlFor="register-confirm-password" className="block text-sm font-medium">Confirm Password</label>
             <input
+              id="register-confirm-password"
+              name="confirm-password"
               type="password"
               className="mt-1 w-full border rounded-lg px-3 py-2"
               value={confirmPassword}

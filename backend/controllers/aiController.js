@@ -12,7 +12,7 @@ export const rewritePost = async (req, res) => {
         }
 
         // Using gemini-1.5-flash which is standard and fast
-        const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         const prompt = `Rewrite the following social media post in a clear and engaging way without changing its meaning:\n\n${content}`;
 

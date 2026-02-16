@@ -42,7 +42,10 @@ const Login = () => {
         
         try {
             const response = await authService.login(email, password)
-            login(response.token)
+            console.log('Login response:', response);
+            const userId = typeof response.userId === 'object' ? response.userId._id || response.userId.toString() : response.userId;
+            console.log('Saving userId:', userId);
+            login(response.token, String(userId))
             setToast({ message: 'Login successful! Redirecting...', type: 'success' })
             setTimeout(() => navigate('/'), 1500)
         } catch (error) {
@@ -90,11 +93,13 @@ const Login = () => {
                         )}
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">
+                            <label htmlFor="login-email" className="block text-sm font-medium text-gray-700">
                                 Email address
                             </label>
                             <div className="mt-1">
                                 <input
+                                    id="login-email"
+                                    name="email"
                                     type="email"
                                     className={`appearance-none block w-full px-3 py-2 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                                         fieldErrors.email ? 'border-red-300 bg-red-50' : 'border-gray-300'
@@ -113,11 +118,13 @@ const Login = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">
+                            <label htmlFor="login-password" className="block text-sm font-medium text-gray-700">
                                 Password
                             </label>
                             <div className="mt-1">
                                 <input
+                                    id="login-password"
+                                    name="password"
                                     type="password"
                                     className={`appearance-none block w-full px-3 py-2 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                                         fieldErrors.password ? 'border-red-300 bg-red-50' : 'border-gray-300'

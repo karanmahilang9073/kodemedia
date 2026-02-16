@@ -1,13 +1,14 @@
 import express from 'express'
-import protect from '../middleware/authMiddleware.js'
-import { addComment, createPost, deletePost, getPosts, likePost } from '../controllers/postController.js'
+import { verifyToken } from '../middleware/authMiddleware.js'
+import { addComment, createPost, deletePost, getPosts, likePost, updatePost } from '../controllers/postController.js'
 
 const router = express.Router()
 
-router.post('/',protect, createPost)
+router.post('/',verifyToken, createPost)
 router.get('/',getPosts)
-router.put('/:postId/like',protect,likePost)
-router.post('/:postId/comment',protect,addComment)
-router.delete('/:postId',protect,deletePost)
+router.put('/:postId/like',verifyToken,likePost)
+router.post('/:postId/comment',verifyToken,addComment)
+router.put('/:postId',verifyToken,updatePost)
+router.delete('/:postId',verifyToken,deletePost)
 
 export default router

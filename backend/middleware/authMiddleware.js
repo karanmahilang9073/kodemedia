@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const protect = (req, res, next) => {
+export const verifyToken = (req, res, next) => {
     let token;
 
     // Check Authorization header
@@ -21,7 +21,7 @@ const protect = (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         // Attach user id to request
-        req.user = decoded.id;
+        req.user = { id: decoded.id };
 
         next();
     } catch (error) {
@@ -29,4 +29,4 @@ const protect = (req, res, next) => {
     }
 };
 
-export default protect;
+export default verifyToken;

@@ -13,6 +13,16 @@ export const postService = {
     return response.data;
   },
 
+  updatePost: async (postId, content) => {
+    const response = await api.put(`/posts/${postId}`, { content });
+    return response.data;
+  },
+
+  deletePost: async (postId) => {
+    const response = await api.delete(`/posts/${postId}`);
+    return response.data;
+  },
+
   likePost: async (postId) => {
     const response = await api.put(`/posts/${postId}/like`, {});
     return response.data;

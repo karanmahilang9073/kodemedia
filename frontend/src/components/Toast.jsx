@@ -21,7 +21,7 @@ export const Toast = ({ message, type = 'info', duration = 3000, onClose }) => {
   }[type];
 
   return (
-    <div className={`fixed top-4 right-4 p-4 rounded-lg border ${bgColor} ${textColor} shadow-lg font-medium text-sm animate-slide-in-right`}>
+    <div className={`fixed top-20 right-4 p-4 rounded-lg border ${bgColor} ${textColor} shadow-lg font-medium text-sm animate-slide-in-right z-50`}>
       {message}
     </div>
   );
