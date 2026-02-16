@@ -51,7 +51,7 @@ const Home = () => {
         <CreatePostForm onPostCreated={fetchPosts} setToast={setToast} />
 
         {/* Feed */}
-        <h3 className="text-lg font-semibold mb-4">Feed</h3>
+        <h3 className="text-lg font-semibold mb-4">enjoy your feed...</h3>
 
         {loading ? (
           <SkeletonPostList />
