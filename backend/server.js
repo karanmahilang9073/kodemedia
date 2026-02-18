@@ -8,28 +8,32 @@ import cors from 'cors'
 
 const app = express()
 
-// 1. PLACE CORS AT THE TOP
 app.use(cors({
-    origin: 'http://localhost:5173', // Fixed: added //
+    origin: 'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true 
 }))
 
 app.use(express.json())
 
-const PORT = process.env.PORT || 5000 // Added a fallback port
+const PORT = process.env.PORT 
 
-// 2. CONNECT DB
+// CONNECT DB
 connectDB()
 
-// 3. ROUTES
+// ROUTES
 app.get('/', (req, res) => {
     res.send("backend running properly")
 })
-
 app.use('/api/auth', router)
 app.use('/api/posts', postRoutes)
 app.use('/api/ai', aiRouter)
+
+//global error handler
+app.use((err, req, res, next) => {
+    console.log("error", err)
+    res.status(err.statusCode).json({success : false, message : err.message || "internal server error"})
+})
 
 app.listen(PORT, () => {
     console.log(`backend is running on port ${PORT}`)

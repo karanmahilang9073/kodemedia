@@ -1,7 +1,5 @@
 import Post from "../models/Post.js";
 
-
-
 export const createPost = async(req, res)=>{
     try {
         const {content} = req.body;
@@ -13,7 +11,7 @@ export const createPost = async(req, res)=>{
             author: req.user.id
         }) 
         await post.save()
-        res.status(200).json({message : "post created successfully", post})
+        res.status(201).json({message : "post created successfully", post})
     } catch (error) {
         res.status(500).json({ message: "failed to create post" });
     }

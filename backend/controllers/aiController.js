@@ -1,35 +1,36 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
+import dotenv from "dotenv";
 
-// Access your API key from environment variables
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+dotenv.config();
+
+const genAI = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 export const rewritePost = async (req, res) => {
-    try {
-        const { content } = req.body;
+  try {
+    const { content } = req.body;
 
-        if (!content) {
-            return res.status(400).json({ message: "content is required" });
-        }
-
-        // Using gemini-1.5-flash which is standard and fast
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
-        const prompt = `Rewrite the following social media post in a clear and engaging way without changing its meaning:\n\n${content}`;
-
-        const result = await model.generateContent(prompt);
-        
-        // Use await here to ensure text is extracted properly
-        const response = await result.response;
-        const text = response.text();
-
-        res.status(200).json({
-            rewrittenContent: text
-        });
-    } catch (error) {
-        console.error("Gemini Error:", error); // Log the actual error for debugging
-        res.status(500).json({ 
-            message: "AI rewrite failed",
-            error: error.message // Helps you see why it failed during testing
-        });
+    if (!content) {
+      return res.status(400).json({ message: "Content is required" });
     }
+
+    const prompt = `Rewrite the following social media post in a clear and engaging way without changing its meaning:\n\n${content}`;
+
+    const response = await genAI.models.generateContent({
+      model: "gemini-2.0-flash",  // ✅ Correct working model
+      contents: prompt,
+    });
+
+    return res.status(200).json({
+      rewrittenContent: response.text,
+    });
+
+  } catch (error) {
+    console.error("Gemini Error:", error);
+    return res.status(500).json({
+      message: "AI rewrite failed",
+      error: error.message,
+    });
+  }
 };
