@@ -57,15 +57,16 @@ const CreatePostForm = ({ onPostCreated, setToast }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 mb-8 border">
-      <h3 className="text-lg font-semibold mb-4">Create a Post</h3>
+    <div className="bg-white rounded-xl shadow-md p-3 mb-4 border">
+      <h3 className="text-base font-semibold mb-4">Create a Post</h3>
 
-      <form onSubmit={handleCreatePost} className="space-y-4">
+      <form onSubmit={handleCreatePost} className="space-y-3 ">
+        {/* text area of create post  */}
         <textarea
           id="post-content"
           name="content"
           className="w-full p-4 border rounded-lg focus:ring-2 focus:ring-blue-500 resize-none"
-          rows="4"
+          rows="1"
           placeholder="What's on your mind?"
           value={content}
           onChange={(e) => setContent(e.target.value)}
