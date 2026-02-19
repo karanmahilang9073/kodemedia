@@ -14,7 +14,7 @@ export const createPost = asyncHandler(async(req,res) => {
     await post.save()
 
     res.status(200).json({success : true, message : 'post created successsfully'})
-}) 
+})
 
 export const getPosts = asyncHandler(async(req,res) => {
     const page = Number(req.query.page) || 1;
