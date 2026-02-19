@@ -1,25 +1,43 @@
 import User from "../models/User.js";
-import bcryp, { genSaltSync } from 'bcryptjs'
 import generateToken from "../utils/generateToken.js";
 import Post from "../models/Post.js";
+import { asyncHandler } from "../middleware/asynchandler.js";
+import bcrypt from "bcryptjs";
 
 
-export const registerUser = async(req,res)=>{
-    try {
-        const {name,email,password} = req.body;
-        const existed = await User.findOne({email})
-        if (existed) {
-            return res.status(409).json({message : 'user already existed'})
-        }
-        const hashed = await bcryp.hash(password, 10)
-        const user = new User({name, email, password : hashed})
-        await user.save()
-        res.status(200).json({message : "user created successfully"})
-    } catch (error) {
-        console.log('failed to create user')
-        return res.status(500).json({message : "internal server error"})
+export const registerUser = asyncHandler(async(req, res) => {
+    const {name, email, password} = req.body;
+    if(!name || !email || !password){
+        const error = new Error('all fields are required')
+        error.statusCode = 400
+        throw error
     }
-}
+    if(password.length < 6){
+        const error = new Error('password must be atleast 6 characters')
+        error.statusCode = 400
+        throw error
+    }
+
+    const existed = await User.findOne({email})
+    if(existed){
+        const error = new Error('user already existed')
+        error.statusCode = 400
+        throw error
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    const user = await User.create({name, email, password : hashedPassword})
+
+    res.status(201).json({success : true, message : 'user created successfully', 
+        user : {
+            _id : user._id,
+            name : user.name,
+            email : user.email,
+        }
+    })
+})
+
 
 export const loginUser = async(req,res)=>{
     try {
@@ -28,7 +46,7 @@ export const loginUser = async(req,res)=>{
         if (!user) {
             return res.status(401).json({message : 'user not found'})
         }
-        const compare = await bcryp.compare(password, user.password)
+        const compare = await bcrypt.compare(password, user.password)
         if (!compare) {
             return res.status(400).json({message : 'password doesnot matched'})
         }
