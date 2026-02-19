@@ -1,5 +1,6 @@
 import Post from "../models/Post.js";
 import {asyncHandler} from '../middleware/asynchandler.js'
+import mongoose from "mongoose";
 
 export const createPost = asyncHandler(async(req,res) => {
     const {content} = req.body
@@ -53,25 +54,35 @@ export const likePost = asyncHandler(async(req, res) =>{
     res.status(200).json({success : true, message : 'like updated successfully', likesCount : updatePost.likes.length})
 })
 
-export const addComment = async(req,res)=>{
-    try {
-        const {postId} = req.params
-        const {text} = req.body
-        const userId = req.user.id
-        const post = await Post.findById(postId)
-        if (!post) {
-            return res.status(404).json({message : "post not found"})
-        }
-        post.comments.push({text, user : userId});
-        await post.save()
-        res.status(200).json({
-            message : "comment added successfully",
-            commentsCount : post.comments.length
-        })
-    } catch (error) {
-        res.status(500).json({message : "failed to add comment"})
+export const addComment = asyncHandler(async(req, res) => {
+    const {postId} = req.params
+    const {text} = req.body
+    const userId = req.user.id
+
+    if(!mongoose.Types.ObjectId.isValid(postId)){
+        const error = new Error("invalid post ID")
+        error.statusCode = 400
+        throw error
     }
-}
+
+    if(!text || !text.trim()){
+        const error = new Error('comment text is required')
+        error.statusCode = 400
+        throw error
+    }
+
+    const updatePost = await Post.findByIdAndUpdate(postId,{
+        $push : {comments : {text, userId}}
+    }, { new :  true}) //return updated document
+
+    if(!updatePost){
+        const error = new Error('post not found')
+        error.statusCode = 404
+        throw error
+    }
+
+    res.status(201).json({success : true, message : "comment added successfully", commentsCount : updatePost.comments.length})
+})
 
 export const deletePost = async(req,res)=>{
     try {
