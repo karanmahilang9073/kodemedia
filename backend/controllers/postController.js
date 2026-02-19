@@ -16,7 +16,6 @@ export const createPost = asyncHandler(async(req,res) => {
     res.status(200).json({success : true, message : 'post created successsfully'})
 })
 
-
 export const getPosts = asyncHandler(async(req,res) => {
     const page = Number(req.query.page) || 1;
     const limit = 10;
@@ -33,9 +32,6 @@ export const getPosts = asyncHandler(async(req,res) => {
 
     res.status(200).json({success : true, page, totalpages : Math.ceil(totalPosts / limit), totalPosts, posts})
 })
-
-
-
 
 export const likePost = asyncHandler(async(req, res) =>{
     const {postId} = req.params
@@ -84,6 +80,43 @@ export const addComment = asyncHandler(async(req, res) => {
     res.status(201).json({success : true, message : "comment added successfully", commentsCount : updatePost.comments.length})
 })
 
+export const updatePost = asyncHandler(async(req, res) => {
+    const {postId} = req.params
+    const {content} = req.body
+    const userId = req.user.id
+
+    if(!mongoose.Types.ObjectId.isValid(postId)){
+        const error = new Error('invalid post ID')
+        error.statusCode = 400
+        throw error
+    }
+
+    if(!content || !content.trim()){
+        const error = new Error('content is required')
+        error.statusCode = 400
+        throw error
+    }
+
+    const post = await Post.findById(postId)
+    if(!post){
+        const error = new Error('post not found')
+        error.statusCode = 404
+        throw error
+    }
+
+    if(post.author.toString() !== userId){
+        const error = new Error('you are not authorized to update this post')
+        error.statusCode = 403
+        throw error
+    }
+
+    post.content = content.trim()
+    await post.save()
+
+    res.status(200).json({success : true, messagee : "post updated successfully",})
+
+})
+
 export const deletePost = asyncHandler(async(req, res) => {
     const {postId}  = req.params;
     const userId = req.user.id;
@@ -110,30 +143,3 @@ export const deletePost = asyncHandler(async(req, res) => {
 
     res.status(200).json({success : true, message : "post deleted successfully"})
 })
-
-export const updatePost = async(req,res)=>{
-    try {
-        const {postId} = req.params;
-        const {content} = req.body;
-        
-        if (!content || !content.trim()) {
-            return res.status(400).json({message : "content is required"})
-        }
-        
-        const post = await Post.findById(postId)
-        if (!post) {
-            return res.status(404).json({message : "post not found"})
-        }
-        
-        if (post.author.toString() != req.user.id) {
-            return res.status(403).json({message : "not authorized to update the post"})
-        }
-        
-        post.content = content
-        await post.save()
-        
-        res.status(200).json({message : "post updated successfully", post})
-    } catch (error) {
-        res.status(500).json({message : "failed to update post"})
-    }
-}
