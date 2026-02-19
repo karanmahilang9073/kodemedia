@@ -1,23 +1,6 @@
 import Post from "../models/Post.js";
 import {asyncHandler} from '../middleware/asynchandler.js'
 
-// export const createPost = async(req, res)=>{
-//     try {
-//         const {content} = req.body;
-//         if (!content) {
-//             return res.status(400).json({message : "content is required"})
-//         }
-//         const post = new Post({
-//             content, 
-//             author: req.user.id
-//         }) 
-//         await post.save()
-//         res.status(201).json({message : "post created successfully", post})
-//     } catch (error) {
-//         res.status(500).json({ message: "failed to create post" });
-//     }
-// }
-
 export const createPost = asyncHandler(async(req,res) => {
     const {content} = req.body
     if(!content){
@@ -47,27 +30,23 @@ export const getPosts = async(req,res)=>{
     }
 }
 
-export const likePost = async(req,res)=>{
-    try {
-        const {postId} = req.params
-        const userId = req.user.id
-        const post = await Post.findById(postId)
-        if (!post) {
-            return res.status(400).json({message : "post not found"})
-        }
-        if (post.likes.includes(userId)) {
-            post.likes = post.likes.filter(
-                (id) => id.toString() !== userId.toString()
-            )
-        }else{
-            post.likes.push(userId)
-        }
-        await post.save()
-        res.status(200).json({message : "likes updated", likesCount : post.likes.length})
-    } catch (error) {
-        res.status(500).json({message : "failed to like post"})
+
+export const likePost = asyncHandler(async(req, res) =>{
+    const {postId} = req.params
+    const userId = req.user.id
+    const post = await Post.findById(postId)
+    if(!post){
+        const error = new Error('post not found')
+        error.statusCode = 404
+        throw error
     }
-}
+    const isLiked = post.likes.includes(userId)
+    const update = isLiked ? {$pull : {likes : userId}} : {$addToSet : {likes : userId}}
+
+    const updatePost = await Post.findByIdAndUpdate(postId, update, {new : true})
+
+    res.status(200).json({success : true, message : 'like updated successfully', likesCount : updatePost.likes.length})
+})
 
 export const addComment = async(req,res)=>{
     try {
