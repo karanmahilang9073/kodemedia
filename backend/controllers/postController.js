@@ -84,22 +84,32 @@ export const addComment = asyncHandler(async(req, res) => {
     res.status(201).json({success : true, message : "comment added successfully", commentsCount : updatePost.comments.length})
 })
 
-export const deletePost = async(req,res)=>{
-    try {
-        const {postId} = req.params;
-        const post = await Post.findById(postId)
-        if (!post) {
-            return res.status(404).json({message : "post didnot found"})
-        }
-        if (post.author.toString() != req.user.id) {
-            return res.status(403).json({message : "not authorized to delete the post"})
-        }
-        await post.deleteOne()
-        res.status(200).json({message : "post deleted successfully"})
-    } catch (error) {
-        res.status(500).json({message : "failed to delete post"})
+export const deletePost = asyncHandler(async(req, res) => {
+    const {postId}  = req.params;
+    const userId = req.user.id;
+
+    if(!mongoose.Types.ObjectId.isValid(postId)){
+        const error = new Error('invalid post ID')
+        error.statuscode = 400
+        throw error
     }
-}
+
+    const post = await Post.findById(postId)
+    if(!post){
+        const error = new Error("post not found")
+        error.statusCode = 404
+        throw error
+    }
+
+    if(post.author.toString() !== userId){
+        const error = new Error('you are not authorized to  delete this post')
+        error.statusCode = 403
+        throw error
+    }
+    await post.deleteOne()
+
+    res.status(200).json({success : true, message : "post deleted successfully"})
+})
 
 export const updatePost = async(req,res)=>{
     try {
