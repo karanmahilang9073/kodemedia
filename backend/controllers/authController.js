@@ -38,32 +38,6 @@ export const registerUser = asyncHandler(async(req, res) => {
     })
 })
 
-
-// export const loginUser = async(req,res)=>{
-//     try {
-//         const {email, password} = req.body
-//         const user = await User.findOne({email})
-//         if (!user) {
-//             return res.status(401).json({message : 'user not found'})
-//         }
-//         const compare = await bcrypt.compare(password, user.password)
-//         if (!compare) {
-//             return res.status(400).json({message : 'password doesnot matched'})
-//         }
-//         const token = generateToken(user._id)
-//         const userId = user._id.toString()
-//         console.log('Login - returning userId:', userId)
-//         res.status(200).json({
-//             userId : userId,
-//             email : user.email,
-//             token : token,
-//         })
-//     } catch (error) {
-//         res.status(500).json({message : 'internal server error'})
-//     }
-
-// }
-
 export const loginUser = asyncHandler(async(req, res) => {
     const {email, password} = req.body
     if(!email || !password){
