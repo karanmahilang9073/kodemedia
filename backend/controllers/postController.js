@@ -1,21 +1,36 @@
 import Post from "../models/Post.js";
+import {asyncHandler} from '../middleware/asynchandler.js'
 
-export const createPost = async(req, res)=>{
-    try {
-        const {content} = req.body;
-        if (!content) {
-            return res.status(400).json({message : "content is required"})
-        }
-        const post = new Post({
-            content, 
-            author: req.user.id
-        }) 
-        await post.save()
-        res.status(201).json({message : "post created successfully", post})
-    } catch (error) {
-        res.status(500).json({ message: "failed to create post" });
+// export const createPost = async(req, res)=>{
+//     try {
+//         const {content} = req.body;
+//         if (!content) {
+//             return res.status(400).json({message : "content is required"})
+//         }
+//         const post = new Post({
+//             content, 
+//             author: req.user.id
+//         }) 
+//         await post.save()
+//         res.status(201).json({message : "post created successfully", post})
+//     } catch (error) {
+//         res.status(500).json({ message: "failed to create post" });
+//     }
+// }
+
+export const createPost = asyncHandler(async(req,res) => {
+    const {content} = req.body
+    if(!content){
+        const error = new Error('content is required')
+        error.statusCode = 400;
+        throw error;
     }
-}
+    const post = new Post({content, author : req.user.id})
+
+    await post.save()
+
+    res.status(200).json({success : true, message : 'post created successsfully'})
+})
 
 export const getPosts = async(req,res)=>{
     try {
