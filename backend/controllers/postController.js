@@ -15,20 +15,6 @@ export const createPost = asyncHandler(async(req,res) => {
     res.status(200).json({success : true, message : 'post created successsfully'})
 })
 
-// export const getPosts = async(req,res)=>{
-//     try {
-//         const posts = await Post.find()
-//             .sort({createdAt : -1})
-//             .populate("author","_id name email")
-//             .populate({
-//                 path: 'comments.user',
-//                 select: '_id name email'
-//             })
-//         res.status(200).json({posts})
-//     } catch (error) {
-//         res.status(500).json({message : "failed to fetch posts"})
-//     }
-// }
 
 export const getPosts = asyncHandler(async(req,res) => {
     const page = Number(req.query.page) || 1;
