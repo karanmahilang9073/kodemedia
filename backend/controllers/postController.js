@@ -15,20 +15,39 @@ export const createPost = asyncHandler(async(req,res) => {
     res.status(200).json({success : true, message : 'post created successsfully'})
 })
 
-export const getPosts = async(req,res)=>{
-    try {
-        const posts = await Post.find()
-            .sort({createdAt : -1})
-            .populate("author","_id name email")
-            .populate({
-                path: 'comments.user',
-                select: '_id name email'
-            })
-        res.status(200).json({posts})
-    } catch (error) {
-        res.status(500).json({message : "failed to fetch posts"})
-    }
-}
+// export const getPosts = async(req,res)=>{
+//     try {
+//         const posts = await Post.find()
+//             .sort({createdAt : -1})
+//             .populate("author","_id name email")
+//             .populate({
+//                 path: 'comments.user',
+//                 select: '_id name email'
+//             })
+//         res.status(200).json({posts})
+//     } catch (error) {
+//         res.status(500).json({message : "failed to fetch posts"})
+//     }
+// }
+
+export const getPosts = asyncHandler(async(req,res) => {
+    const page = Number(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    const posts = await Post.find() //all post
+        .sort({createdAt  : -1}) //newest post (descending order)
+        .skip(skip) //skip some post based on page number
+        .limit(limit) //only limited page returns
+        .populate("author", "_id name email") //returns id, name, email
+        .populate({path : "comments.user", select : "_id name email"})
+
+    const totalPosts = await Post.countDocuments();
+
+    res.status(200).json({success : true, page, totalpages : Math.ceil(totalPosts / limit), totalPosts, posts})
+})
+
+
 
 
 export const likePost = asyncHandler(async(req, res) =>{
