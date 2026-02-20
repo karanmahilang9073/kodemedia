@@ -42,9 +42,7 @@ const Login = () => {
         
         try {
             const response = await authService.login(email, password)
-            console.log('Login response:', response);
-            const userId = typeof response.userId === 'object' ? response.userId._id || response.userId.toString() : response.userId;
-            console.log('Saving userId:', userId);
+            const userId = response.user._id;
             login(response.token, String(userId))
             setToast({ message: 'Login successful! Redirecting...', type: 'success' })
             setTimeout(() => navigate('/'), 1500)

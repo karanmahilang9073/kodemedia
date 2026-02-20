@@ -9,7 +9,7 @@ const PostCard = ({ post, userId, expandedComments, setExpandedComments, setToas
   const [deletePostId, setDeletePostId] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const authorId = post.author?._id ? String(post.author._id) : null;
+  const authorId = post.author?._id || post.author;
   const isAuthor = userId && authorId && String(userId) === String(authorId);
 
   const handleEditPost = (post) => {
