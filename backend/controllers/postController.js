@@ -47,7 +47,11 @@ export const likePost = asyncHandler(async(req, res) =>{
 
     const updatePost = await Post.findByIdAndUpdate(postId, update, {new : true})
 
-    res.status(200).json({success : true, message : 'like updated successfully', likesCount : updatePost.likes.length})
+    const populatedPost = await Post.findById(postId)
+      .populate("author", "_id name email")
+      .populate({path : "comments.user", select : "_id name email"})
+
+    res.status(200).json({success : true, message : 'like updated successfully', post : populatedPost})
 })
 
 export const addComment = asyncHandler(async(req, res) => {

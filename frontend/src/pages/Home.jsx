@@ -15,21 +15,6 @@ const Home = () => {
 
   const { userId } = useContext(AuthContext);
 
-  // const fetchPosts = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const data = await postService.getAllPosts();
-  //     setPosts(data.posts || []);
-  //   } catch (error) {
-  //     setToast({
-  //       message: error.response?.data?.message || "Failed to fetch posts",
-  //       type: "error",
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const fetchPosts = useCallback(async () =>{
     try {
       setLoading(true)
@@ -42,6 +27,11 @@ const Home = () => {
     }
   }, [])
 
+  const handlePostLike = useCallback((postId, updatedPost) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((p) => (p._id === postId ? updatedPost : p))
+    );
+  }, []);
 
   useEffect(() => {
     fetchPosts();
@@ -80,6 +70,7 @@ const Home = () => {
               setExpandedComments={setExpandedComments}
               setToast={setToast}
               onPostUpdated={fetchPosts}
+              onPostLike = {handlePostLike}
             />
           ))
         )}
