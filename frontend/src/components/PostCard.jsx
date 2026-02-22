@@ -3,7 +3,7 @@ import CommentSection from "./CommentSection";
 import { postService } from "../services/postService";
 import React from "react";
 
-const PostCard = ({ post, userId, setToast,  onPostUpdated, onOptimisticLike }) => {
+const PostCard = ({ post, userId, setToast, onPostUpdated, onOptimisticLike, onCommentAdded }) => {
   const [editingPostId, setEditingPostId] = useState(null);
   const [editContent, setEditContent] = useState("");
   const [editLoading, setEditLoading] = useState(false);
@@ -56,6 +56,11 @@ const PostCard = ({ post, userId, setToast,  onPostUpdated, onOptimisticLike }) 
       setDeleteLoading(false);
     }
   };
+
+  //comment update full page render fixed
+  const handleOptimisticComment = useCallback((newComment) => {
+    onCommentAdded(post._id, newComment)
+  }, [post._id, onCommentAdded])
 
   //like click optimized (fast updation)
   const handleLike = useCallback(async() => {
@@ -163,7 +168,7 @@ const PostCard = ({ post, userId, setToast,  onPostUpdated, onOptimisticLike }) 
       <CommentSection
         post={post}
         setToast={setToast}
-        onCommentAdded={onPostUpdated}
+        onOptimisticComment={handleOptimisticComment}
       />
     </div>
   );

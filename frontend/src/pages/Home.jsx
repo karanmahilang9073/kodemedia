@@ -40,6 +40,14 @@ const Home = () => {
     }))
   }
 
+  //for fast comment update (no page reload)
+  const handleOptimisticComment = (postId, newComment) => {
+    setPosts(prev => prev.map(post => {
+      if(post._id !== postId) return post
+      return {...post, comments: [...(post.comments || []), newComment]}
+    }))
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -72,6 +80,7 @@ const Home = () => {
               setToast={setToast}
               onPostUpdated={fetchPosts}
               onOptimisticLike={handleOptimisticLike}
+              onCommentAdded={handleOptimisticComment}
             />
           ))
         )}

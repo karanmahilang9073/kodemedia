@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { postService } from "../services/postService";
 
-const CommentSection = ({ post, setToast, onCommentAdded }) => {
+const CommentSection = ({ post, setToast, onOptimisticComment }) => {
   const [commentText, setCommentText] = useState("");
   const [expanded, setExpanded] = useState(false)
 
@@ -19,13 +19,14 @@ const CommentSection = ({ post, setToast, onCommentAdded }) => {
       return
     }
     try {
-      await postService.commentPost(post._id, commentText)
+      const newComment = { text: commentText.trim(), user: { name: "You" }, _id: Date.now() }
+      onOptimisticComment(newComment)
       setCommentText("")
-      onCommentAdded();
+      await postService.commentPost(post._id, commentText)
     } catch (error) {
       setToast({message : error?.response?.data?.message || 'failed to add comment', type : "error"})
     }
-  }, [commentText, post._id, onCommentAdded, setToast])
+  }, [commentText, post._id, onOptimisticComment, setToast])
 
   return (
     <div className="mt-4 space-y-2">
