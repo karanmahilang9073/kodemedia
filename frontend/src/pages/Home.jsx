@@ -37,6 +37,16 @@ const Home = () => {
     fetchPosts();
   }, []);
 
+  //for fast like update
+  const handleOptimisticLike = (postId, userId) => {
+    setPosts(prev => prev.map(post => {
+      if(post._id !== postId) return post
+      const alreadyLiked = post.likes.includes(userId)
+      const updatedLikes = alreadyLiked ? post.likes.filter(id => id !== userId) : [...post.likes, userId]
+      return {...post, likes : updatedLikes}
+    }))
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -71,6 +81,7 @@ const Home = () => {
               setToast={setToast}
               onPostUpdated={fetchPosts}
               onPostLike = {handlePostLike}
+              onOptimisticLike={handleOptimisticLike}
             />
           ))
         )}

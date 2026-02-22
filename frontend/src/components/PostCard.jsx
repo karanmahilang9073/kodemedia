@@ -3,7 +3,7 @@ import CommentSection from "./CommentSection";
 import { postService } from "../services/postService";
 import React from "react";
 
-const PostCard = ({ post, userId, setToast, onPostLike, onPostUpdated }) => {
+const PostCard = ({ post, userId, setToast,  onPostUpdated, onOptimisticLike }) => {
   const [editingPostId, setEditingPostId] = useState(null);
   const [editContent, setEditContent] = useState("");
   const [editLoading, setEditLoading] = useState(false);
@@ -57,20 +57,16 @@ const PostCard = ({ post, userId, setToast, onPostLike, onPostUpdated }) => {
     }
   };
 
-
-
-  const handleLike = useCallback(async(postId) => {
+  //like click optimized (fast updation)
+  const handleLike = useCallback(async() => {
+    onOptimisticLike(post._id, userId)
     try {
-      const response = await postService.likePost(postId)
-      if (onPostLike && response.post) {
-        onPostLike(postId, response.post)
-      } else {
-        onPostUpdated()
-      }
+      await postService.likePost(post._id)
     } catch (error) {
+      onOptimisticLike(post._id, userId) //rollback if failed 
       setToast({message : error?.response?.data?.message || 'failed to like post', type : 'error'})
     }
-  }, [onPostLike, onPostUpdated, setToast])
+  }, [post._id, userId, onOptimisticLike, setToast])
 
   return (
     <div
