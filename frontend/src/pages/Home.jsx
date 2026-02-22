@@ -27,12 +27,6 @@ const Home = () => {
     }
   }, [])
 
-  const handlePostLike = useCallback((postId, updatedPost) => {
-    setPosts((prevPosts) =>
-      prevPosts.map((p) => (p._id === postId ? updatedPost : p))
-    );
-  }, []);
-
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -80,7 +74,7 @@ const Home = () => {
               setExpandedComments={setExpandedComments}
               setToast={setToast}
               onPostUpdated={fetchPosts}
-              onPostLike = {handlePostLike}
+              // onPostLike = {handlePostLike}
               onOptimisticLike={handleOptimisticLike}
             />
           ))
