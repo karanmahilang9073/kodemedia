@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import CommentSection from "./CommentSection";
 import { postService } from "../services/postService";
+import React from "react";
 
-const PostCard = ({ post, userId, expandedComments, setExpandedComments, setToast, onPostUpdated }) => {
+const PostCard = ({ post, userId, setToast, onPostUpdated }) => {
   const [editingPostId, setEditingPostId] = useState(null);
   const [editContent, setEditContent] = useState("");
   const [editLoading, setEditLoading] = useState(false);
@@ -56,17 +57,26 @@ const PostCard = ({ post, userId, expandedComments, setExpandedComments, setToas
     }
   };
 
-  const handleLike = async (postId) => {
+  // const handleLike = async (postId) => {
+  //   try {
+  //     await postService.likePost(postId);
+  //     onPostUpdated();
+  //   } catch (error) {
+  //     setToast({
+  //       message: error.response?.data?.message || "Failed to like post",
+  //       type: "error",
+  //     });
+  //   }
+  // };
+
+  const handleLike = useCallback(async(postId) => {
     try {
-      await postService.likePost(postId);
-      onPostUpdated();
+      await postService.likePost(postId)
+      onPostUpdated()
     } catch (error) {
-      setToast({
-        message: error.response?.data?.message || "Failed to like post",
-        type: "error",
-      });
+      setToast({message : error?.response?.data?.message || 'failed to like post', type : 'error'})
     }
-  };
+  }, [onPostUpdated, setToast])
 
   return (
     <div
@@ -162,8 +172,6 @@ const PostCard = ({ post, userId, expandedComments, setExpandedComments, setToas
       {/* Comments Section */}
       <CommentSection
         post={post}
-        expandedComments={expandedComments}
-        setExpandedComments={setExpandedComments}
         setToast={setToast}
         onCommentAdded={onPostUpdated}
       />
@@ -171,4 +179,4 @@ const PostCard = ({ post, userId, expandedComments, setExpandedComments, setToas
   );
 };
 
-export default PostCard;
+export default React.memo(PostCard);

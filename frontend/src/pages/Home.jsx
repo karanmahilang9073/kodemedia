@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import Toast from "../components/Toast";
@@ -15,20 +15,33 @@ const Home = () => {
 
   const { userId } = useContext(AuthContext);
 
-  const fetchPosts = async () => {
+  // const fetchPosts = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const data = await postService.getAllPosts();
+  //     setPosts(data.posts || []);
+  //   } catch (error) {
+  //     setToast({
+  //       message: error.response?.data?.message || "Failed to fetch posts",
+  //       type: "error",
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const fetchPosts = useCallback(async () =>{
     try {
-      setLoading(true);
-      const data = await postService.getAllPosts();
-      setPosts(data.posts || []);
+      setLoading(true)
+      const data = await postService.getAllPosts()
+      setPosts(data.posts || [])
     } catch (error) {
-      setToast({
-        message: error.response?.data?.message || "Failed to fetch posts",
-        type: "error",
-      });
+      setToast({message : error?.response?.data?.message || "failed to fetch posts", type : "error"})
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }, [])
+
 
   useEffect(() => {
     fetchPosts();
