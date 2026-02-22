@@ -11,7 +11,6 @@ const Home = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
-  const [expandedComments, setExpandedComments] = useState({});
 
   const { userId } = useContext(AuthContext);
 
@@ -70,11 +69,8 @@ const Home = () => {
               key={post._id}
               post={post}
               userId={userId}
-              expandedComments={expandedComments}
-              setExpandedComments={setExpandedComments}
               setToast={setToast}
               onPostUpdated={fetchPosts}
-              // onPostLike = {handlePostLike}
               onOptimisticLike={handleOptimisticLike}
             />
           ))
